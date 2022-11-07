@@ -80,11 +80,14 @@ public class GetDriverDetails extends AppCompatActivity {
                             latitude=Double.toString(address.get(0).getLatitude());
                             System.out.println("MyLocation"+longitude+","+latitude);
                             Map<String,Object> driver=new HashMap();
-                            driver.put("Name",name);
+                            driver.put("name",name);
                             driver.put("mobile",mobile);
-                            driver.put("License",String.valueOf(licenseET.getText()));
+                            driver.put("license",String.valueOf(licenseET.getText()));
                             driver.put("longitude",longitude);
                             driver.put("latitude",latitude);
+                            driver.put("licenseImage","");
+                            driver.put("profileImage","");
+
 
                             userDetails.collection("drivers").document(mobile).set(driver).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
