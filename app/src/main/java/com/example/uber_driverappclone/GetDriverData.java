@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,8 +34,7 @@ import java.util.Map;
 
 public class GetDriverData extends AppCompatActivity {
 
-    Button button;
-    ImageView img234;
+    Button button,submitLicense;
     SharedPreferences sp;
     String mobile;
     FirebaseFirestore driverData;
@@ -46,7 +46,7 @@ public class GetDriverData extends AppCompatActivity {
         setContentView(R.layout.activity_get_driver_data);
         driverData=FirebaseFirestore.getInstance();
         button=findViewById(R.id.button234);
-        img234=findViewById(R.id.img234);
+        submitLicense=findViewById(R.id.submitLicense);
         sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
         mobile=sp.getString("mobile","no");
 
@@ -65,35 +65,38 @@ public class GetDriverData extends AppCompatActivity {
                 Bundle myBundle=result.getData().getExtras();
                 Uri imageUri;
                 Bitmap imgBitmap=(Bitmap) myBundle.get("data");
-
                 WeakReference<Bitmap> wr=new WeakReference<>(Bitmap.createScaledBitmap(imgBitmap,
                         imgBitmap.getWidth(),imgBitmap.getHeight(),false)
                         .copy(Bitmap.Config.RGB_565,true));
                 Bitmap am=wr.get();
-
-
                 imageUri=saveImage(am,GetDriverData.this);
                 System.out.println("imageUri : "+imageUri);
                 String uriImage=String.valueOf(imageUri);
                 Map<String,Object> driver=new HashMap();
                 driver.put("licenseImage",uriImage);
                 System.out.println("mobile"+mobile);
-                driverData.collection("drivers").document(mobile).update("licenseImage",uriImage);
-
-
-
-                driverData.collection("drivers").document(mobile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        String image=(String)documentSnapshot.get("licenseImage");
-                        Uri uri22= Uri.parse(image);
-                        img234.setImageURI(uri22);
-                    }
-                });
+                driverData.collection("drivers")
+                        .document(mobile).update("licenseImage",uriImage);
+                Toast.makeText(GetDriverData.this, "Your License is added to Our Database", Toast.LENGTH_SHORT).show();
+                button.setClickable(false);
+                submitLicense.setVisibility(View.VISIBLE);
 
             }
         });
 
+        submitLicense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getToDashBoard();
+            }
+        });
+
+    }
+
+    private void getToDashBoard() {
+        /*Intent i=new Intent(GetDriverDetails.this,DashBoard.class);
+        startActivity(i);*/
+        Toast.makeText(this, "Leads to dash board", Toast.LENGTH_SHORT).show();
     }
 
     private Uri saveImage(Bitmap imgBitmap, Context context) {

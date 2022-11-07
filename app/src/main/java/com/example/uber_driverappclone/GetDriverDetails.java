@@ -87,13 +87,14 @@ public class GetDriverDetails extends AppCompatActivity {
                             driver.put("latitude",latitude);
                             driver.put("licenseImage","");
                             driver.put("profileImage","");
+                            driver.put("loginStatus","Offline");
 
 
                             userDetails.collection("drivers").document(mobile).set(driver).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     Toast.makeText(GetDriverDetails.this, "Data added", Toast.LENGTH_SHORT).show();
-                                    goToDashboard();
+                                    goToGetLicense();
                                 }
                             });
 
@@ -121,9 +122,8 @@ public class GetDriverDetails extends AppCompatActivity {
         }
     }
 
-    private void goToDashboard() {
-        /*Intent i=new Intent(GetDriverDetails.this,DashBoard.class);
-        startActivity(i);*/
-        Toast.makeText(this, "Leads to dash board", Toast.LENGTH_SHORT).show();
+    private void goToGetLicense() {
+        Intent i=new Intent(GetDriverDetails.this,GetDriverData.class);
+        startActivity(i);
     }
 }
