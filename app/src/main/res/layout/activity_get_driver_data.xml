@@ -20,10 +20,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/button234"
-            android:background="#30ffffff"
+            android:background="@color/white"
             android:textColor="@color/black"
+            android:layout_margin="3dp"
             android:text="Add Your Driving License Photograph"
-            android:drawableEnd="@drawable/next"/>
+            android:drawableEnd="@drawable/get_through"/>
 
     </androidx.cardview.widget.CardView>
 

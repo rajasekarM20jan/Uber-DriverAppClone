@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeButton"
+        android:icon="@drawable/home"
+        android:title="Home" />
+    <item
+        android:id="@+id/profileButton"
+        android:icon="@drawable/profile"
+        android:title="Profile" />
+    <item
+        android:id="@+id/earningsButton"
+        android:icon="@drawable/earnings"
+        android:title="Earnings" />
+    <item
+        android:id="@+id/settingsButton"
+        android:icon="@drawable/settings"
+        android:title="Settings" />
+
+</menu>

@@ -94,9 +94,8 @@ public class GetDriverData extends AppCompatActivity {
     }
 
     private void getToDashBoard() {
-        /*Intent i=new Intent(GetDriverDetails.this,DashBoard.class);
-        startActivity(i);*/
-        Toast.makeText(this, "Leads to dash board", Toast.LENGTH_SHORT).show();
+        Intent i=new Intent(GetDriverData.this,DashBoard.class);
+        startActivity(i);
     }
 
     private Uri saveImage(Bitmap imgBitmap, Context context) {

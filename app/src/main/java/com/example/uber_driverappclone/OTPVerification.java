@@ -145,8 +145,8 @@ public class OTPVerification extends AppCompatActivity {
     }
 
     void getToDashboard(){
-        /*Intent i=new Intent(OTPVerification.this,DashBoard.class);
-        startActivity(i);*/
+        Intent i=new Intent(OTPVerification.this,DashBoard.class);
+        startActivity(i);
         Toast.makeText(this, "Leads to Dashboard", Toast.LENGTH_SHORT).show();
     }
 
