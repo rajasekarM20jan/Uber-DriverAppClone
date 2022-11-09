@@ -87,6 +87,7 @@ public class GetDriverDetails extends AppCompatActivity {
                             driver.put("latitude",latitude);
                             driver.put("licenseImage","");
                             driver.put("profileImage","");
+                            driver.put("carType","");
                             driver.put("loginStatus","Offline");
 
 

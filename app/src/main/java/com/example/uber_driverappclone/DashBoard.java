@@ -203,7 +203,7 @@ public class DashBoard extends AppCompatActivity {
                                     String myLat=documentSnapshot.getString("latitude");
                                     String myLon=documentSnapshot.getString("longitude");
                                     TextView txt2=findViewById(R.id.txt2);
-                                    txt2.setText(txt2.getText()+"\nMyLocation : "+myLon+","+myLat);
+                                    txt2.setText("MyLocation : "+myLon+","+myLat);
                                 }
                             });
 

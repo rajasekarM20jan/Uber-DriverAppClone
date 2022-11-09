@@ -17,6 +17,9 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,9 +37,12 @@ import java.util.Map;
 
 public class GetDriverData extends AppCompatActivity {
 
-    Button button,submitLicense;
+    Button button,submitLicense,carType;
     SharedPreferences sp;
     String mobile;
+    LinearLayout linear123;
+    RadioGroup radioCarType;
+    RadioButton intercity,xlIntercity;
     FirebaseFirestore driverData;
     ActivityResultLauncher<Intent> activityLaunch;
 
@@ -46,6 +52,11 @@ public class GetDriverData extends AppCompatActivity {
         setContentView(R.layout.activity_get_driver_data);
         driverData=FirebaseFirestore.getInstance();
         button=findViewById(R.id.button234);
+        carType=findViewById(R.id.carType);
+        linear123=findViewById(R.id.linear123);
+        radioCarType=findViewById(R.id.radioCarType);
+        intercity=findViewById(R.id.intercity);
+        xlIntercity=findViewById(R.id.xlIntercity);
         submitLicense=findViewById(R.id.submitLicense);
         sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
         mobile=sp.getString("mobile","no");
@@ -79,8 +90,51 @@ public class GetDriverData extends AppCompatActivity {
                         .document(mobile).update("licenseImage",uriImage);
                 Toast.makeText(GetDriverData.this, "Your License is added to Our Database", Toast.LENGTH_SHORT).show();
                 button.setClickable(false);
-                submitLicense.setVisibility(View.VISIBLE);
+                carType.setVisibility(View.VISIBLE);
 
+            }
+        });
+
+        carType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                button.setVisibility(View.INVISIBLE);
+                carType.setVisibility(View.INVISIBLE);
+                linear123.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        radioCarType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+               switch(i){
+                   case R.id.intercity:{
+                       driverData.collection("drivers")
+                               .document(mobile).update("carType","intercity");
+                       Toast.makeText(GetDriverData.this, "Type Of Car you Selected is HatchBack", Toast.LENGTH_SHORT).show();
+                       button.setClickable(false);
+                       carType.setClickable(false);
+                       button.setVisibility(View.VISIBLE);
+                       carType.setVisibility(View.VISIBLE);
+                       linear123.setVisibility(View.INVISIBLE);
+                       submitLicense.setVisibility(View.VISIBLE);
+                       break;
+                   }
+                   case R.id.xlIntercity:{
+                       driverData.collection("drivers")
+                               .document(mobile).update("carType","xlIntercity");
+                       Toast.makeText(GetDriverData.this, "Type Of Car you Selected is SEDAN or SUV", Toast.LENGTH_SHORT).show();
+                       button.setClickable(false);
+                       carType.setClickable(false);
+                       button.setVisibility(View.VISIBLE);
+                       carType.setVisibility(View.VISIBLE);
+                       linear123.setVisibility(View.INVISIBLE);
+                       submitLicense.setVisibility(View.VISIBLE);
+                       break;
+                   }
+               }
             }
         });
 
