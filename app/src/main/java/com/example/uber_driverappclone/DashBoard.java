@@ -24,9 +24,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -154,41 +158,56 @@ public class DashBoard extends AppCompatActivity {
     private void updateMap() {
         if(ContextCompat.checkSelfPermission(DashBoard.this, Manifest.permission.ACCESS_FINE_LOCATION)==
                 PackageManager.PERMISSION_GRANTED){
-            flClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            flClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+                @NonNull
+                @Override
+                public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                    return null;
+                }
+
+                @Override
+                public boolean isCancellationRequested() {
+                    return false;
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
+
                     Geocoder geocoder=new Geocoder(DashBoard.this, Locale.getDefault());
                     if(location!=null){
                         try {
                             List<Address> address=geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
                             String longitude =Double.toString(address.get(0).getLongitude());
                             String latitude=Double.toString(address.get(0).getLatitude());
-                            System.out.println("MyLocation :"+longitude+","+latitude);
-                            TextView txt = findViewById(R.id.txt);
-                            txt.setText(txt.getText()+("\nMyLocation : "+latitude+","+longitude ));
+                            System.out.println("MyLocation : "+longitude+","+latitude);
+
+                            TextView txt=findViewById(R.id.txt);
+                            txt.setText(txt.getText()+"\nMyLocation : "+longitude+","+latitude);
 
                             driverData.collection("drivers").document(mobile).update("latitude",latitude).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    System.out.println("Latitude Updated");
+                                    System.out.println("updated latitude");
                                 }
                             });
                             driverData.collection("drivers").document(mobile).update("longitude",longitude).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    System.out.println("longitude Updated");
+                                    System.out.println("updated longitude");
                                 }
                             });
+
                             driverData.collection("drivers").document(mobile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    String myLat= Objects.requireNonNull(documentSnapshot.get("latitude")).toString();
-                                    String myLon= Objects.requireNonNull(documentSnapshot.get("longitude")).toString();
-                                    TextView txt2 = findViewById(R.id.txt2);
-                                    txt2.setText(txt2.getText()+("\nMyLocation from db : "+myLat+","+myLon));
-
+                                    String myLat=documentSnapshot.getString("latitude");
+                                    String myLon=documentSnapshot.getString("longitude");
+                                    TextView txt2=findViewById(R.id.txt2);
+                                    txt2.setText(txt2.getText()+"\nMyLocation : "+myLon+","+myLat);
                                 }
                             });
+
+
 
                             getTimer();
 
@@ -197,9 +216,9 @@ public class DashBoard extends AppCompatActivity {
                         }
 
                     }
+
                 }
             });
-
 
         }else{
             if(ActivityCompat.shouldShowRequestPermissionRationale(DashBoard.this,
