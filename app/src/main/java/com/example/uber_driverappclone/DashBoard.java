@@ -28,6 +28,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.checkerframework.checker.units.qual.A;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class DashBoard extends AppCompatActivity {
     Button menuOpener,goOnline;
@@ -65,6 +67,14 @@ public class DashBoard extends AppCompatActivity {
             public void onClick(View view) {
                 myNav.setVisibility(View.VISIBLE);
                 menuOpener.setVisibility(View.INVISIBLE);
+            }
+        });
+        driverData.collection("drivers").document(mobile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                String login= Objects.requireNonNull(documentSnapshot.get("loginStatus")).toString();
+                System.out.println("loginStatus-1 : "+login);
             }
         });
 
@@ -112,7 +122,9 @@ public class DashBoard extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         driverData.collection("drivers").document(mobile).update("loginStatus","Online");
+                        getData();
                         Toast.makeText(DashBoard.this, "You're Online", Toast.LENGTH_SHORT).show();
+
 
                     }
                 });
@@ -121,9 +133,22 @@ public class DashBoard extends AppCompatActivity {
             }
         });
 
-        updateMap();
 
 
+
+    }
+    void getData(){
+        driverData.collection("drivers").document(mobile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                String login= Objects.requireNonNull(documentSnapshot.get("loginStatus")).toString();
+                System.out.println("loginStatus : "+login);
+                if(login.equals("Online")){
+                    updateMap();
+                }
+            }
+        });
     }
 
     private void updateMap() {
@@ -138,9 +163,33 @@ public class DashBoard extends AppCompatActivity {
                             List<Address> address=geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
                             String longitude =Double.toString(address.get(0).getLongitude());
                             String latitude=Double.toString(address.get(0).getLatitude());
-                            System.out.println("MyLocation"+longitude+","+latitude);
-                            driverData.collection("drivers").document(mobile).update("latitude",latitude);
-                            driverData.collection("drivers").document(mobile).update("longitude",longitude);
+                            System.out.println("MyLocation :"+longitude+","+latitude);
+                            TextView txt = findViewById(R.id.txt);
+                            txt.setText(txt.getText()+("\nMyLocation : "+latitude+","+longitude ));
+
+                            driverData.collection("drivers").document(mobile).update("latitude",latitude).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    System.out.println("Latitude Updated");
+                                }
+                            });
+                            driverData.collection("drivers").document(mobile).update("longitude",longitude).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    System.out.println("longitude Updated");
+                                }
+                            });
+                            driverData.collection("drivers").document(mobile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    String myLat= Objects.requireNonNull(documentSnapshot.get("latitude")).toString();
+                                    String myLon= Objects.requireNonNull(documentSnapshot.get("longitude")).toString();
+                                    TextView txt2 = findViewById(R.id.txt2);
+                                    txt2.setText(txt2.getText()+("\nMyLocation from db : "+myLat+","+myLon));
+
+                                }
+                            });
+
                             getTimer();
 
                         } catch (IOException e) {
@@ -150,6 +199,7 @@ public class DashBoard extends AppCompatActivity {
                     }
                 }
             });
+
 
         }else{
             if(ActivityCompat.shouldShowRequestPermissionRationale(DashBoard.this,
@@ -166,7 +216,7 @@ public class DashBoard extends AppCompatActivity {
 
     private void getTimer() {
         Handler handler=new Handler();
-        handler.postAtTime(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 updateMap();
@@ -192,6 +242,7 @@ public class DashBoard extends AppCompatActivity {
             exit.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    driverData.collection("drivers").document(mobile).update("loginStatus","Offline");
                     finishAffinity();
                 }
             });
