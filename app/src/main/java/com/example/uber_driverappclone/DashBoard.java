@@ -240,7 +240,7 @@ public class DashBoard extends AppCompatActivity {
             public void run() {
                 updateMap();
             }
-        },5000);
+        },10000);
     }
 
 
