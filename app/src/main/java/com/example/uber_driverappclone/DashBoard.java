@@ -34,10 +34,15 @@ import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.checkerframework.checker.units.qual.A;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -47,9 +52,11 @@ import java.util.Objects;
 public class DashBoard extends AppCompatActivity {
     Button menuOpener,goOnline;
     NavigationView myNav;
-    FirebaseFirestore driverData;
+    FirebaseFirestore driverData,rideData;
     SharedPreferences sp;
-    String mobile;
+    HashMap h;
+    String mobile,carType,rideCar;
+    ArrayList arrayList1,arrayList2,arrayList3,arrayList4;
     FusedLocationProviderClient flClient;
 
     @Override
@@ -62,6 +69,11 @@ public class DashBoard extends AppCompatActivity {
         goOnline=findViewById(R.id.goOnline);
         flClient= LocationServices.getFusedLocationProviderClient(DashBoard.this);
         driverData=FirebaseFirestore.getInstance();
+        arrayList1=new ArrayList<>();
+        arrayList3=new ArrayList<>();
+        arrayList4=new ArrayList<>();
+
+        rideData=FirebaseFirestore.getInstance();
         sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
         mobile=sp.getString("mobile","no");
         System.out.println("qqwertyytuiop  : "+mobile);
@@ -73,14 +85,7 @@ public class DashBoard extends AppCompatActivity {
                 menuOpener.setVisibility(View.INVISIBLE);
             }
         });
-        driverData.collection("drivers").document(mobile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                String login= Objects.requireNonNull(documentSnapshot.get("loginStatus")).toString();
-                System.out.println("loginStatus-1 : "+login);
-            }
-        });
+        getData();
 
         myNav.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -148,6 +153,7 @@ public class DashBoard extends AppCompatActivity {
 
                 String login= Objects.requireNonNull(documentSnapshot.get("loginStatus")).toString();
                 System.out.println("loginStatus : "+login);
+                carType= documentSnapshot.get("carType").toString();
                 if(login.equals("Online")){
                     updateMap();
                 }
@@ -207,6 +213,48 @@ public class DashBoard extends AppCompatActivity {
                                 }
                             });
 
+                            rideData.collection("rides").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    System.out.println("Qwertyuiop: "+queryDocumentSnapshots.getDocuments().toString());
+                                    for(int i=0;i<queryDocumentSnapshots.size();i++){
+                                        arrayList1.add(queryDocumentSnapshots.getDocuments().get(i).getData());
+
+                                    }
+                                    for (int j=0;j<arrayList1.size();j++){
+                                        h= (HashMap) arrayList1.get(j);
+                                        System.out.println("My Rides: "+h);
+                                        if(h.get("carType").equals(carType)){
+                                            System.out.println("CarTypeOfDriver Matched");
+                                            if(h.get("rideStatus").equals("0")){
+                                                System.out.println("CarTypeOfDriver Matched and ride Not Assigned");
+                                                AlertDialog.Builder alert=new AlertDialog.Builder(DashBoard.this);
+                                                alert.setMessage("New Ride For \n Rs."+h.get("rideFare").toString());
+                                                alert.setCancelable(false);
+                                                alert.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        System.out.println("CarTypeOfDriver RideAccepted");
+                                                        Toast.makeText(DashBoard.this, "RideAccepted", Toast.LENGTH_SHORT).show();
+                                                        driverData.collection("drivers").document(mobile).update("loginStatus","Assigned");
+                                                    }
+                                                });
+                                                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Toast.makeText(DashBoard.this, "RideDeclined", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                                alert.show();
+                                            }
+                                        }
+                                    }
+
+                                }
+                            });
+
+
+
 
 
                             getTimer();
@@ -233,15 +281,19 @@ public class DashBoard extends AppCompatActivity {
         }
     }
 
+
+
     private void getTimer() {
         Handler handler=new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                updateMap();
+                Intent intent=new Intent(DashBoard.this,DashBoard.class);
+                startActivity(intent);
             }
-        },10000);
+        },30000);
     }
+
 
 
     @Override
