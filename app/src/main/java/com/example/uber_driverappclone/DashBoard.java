@@ -35,6 +35,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firestore.v1.Document;
 
 import org.checkerframework.checker.units.qual.A;
 import org.json.JSONArray;
@@ -52,10 +53,11 @@ import java.util.Objects;
 public class DashBoard extends AppCompatActivity {
     Button menuOpener,goOnline;
     NavigationView myNav;
+    int j;
     FirebaseFirestore driverData,rideData;
     SharedPreferences sp;
     HashMap h;
-    String mobile,carType,rideCar;
+    String mobile,carType,rideCar,driverName;
     ArrayList arrayList1,arrayList2,arrayList3,arrayList4;
     FusedLocationProviderClient flClient;
 
@@ -67,12 +69,13 @@ public class DashBoard extends AppCompatActivity {
         myNav=findViewById(R.id.myNav);
         menuOpener=findViewById(R.id.menuOpener);
         goOnline=findViewById(R.id.goOnline);
+
         flClient= LocationServices.getFusedLocationProviderClient(DashBoard.this);
         driverData=FirebaseFirestore.getInstance();
         arrayList1=new ArrayList<>();
         arrayList3=new ArrayList<>();
         arrayList4=new ArrayList<>();
-
+        j=0;
         rideData=FirebaseFirestore.getInstance();
         sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
         mobile=sp.getString("mobile","no");
@@ -154,6 +157,7 @@ public class DashBoard extends AppCompatActivity {
                 String login= Objects.requireNonNull(documentSnapshot.get("loginStatus")).toString();
                 System.out.println("loginStatus : "+login);
                 carType= documentSnapshot.get("carType").toString();
+                driverName=documentSnapshot.get("name").toString();
                 if(login.equals("Online")){
                     updateMap();
                 }
@@ -219,46 +223,12 @@ public class DashBoard extends AppCompatActivity {
                                     System.out.println("Qwertyuiop: "+queryDocumentSnapshots.getDocuments().toString());
                                     for(int i=0;i<queryDocumentSnapshots.size();i++){
                                         arrayList1.add(queryDocumentSnapshots.getDocuments().get(i).getData());
+                                    }
+                                    getRides();
 
-                                    }
-                                    for (int j=0;j<arrayList1.size();j++){
-                                        h= (HashMap) arrayList1.get(j);
-                                        System.out.println("My Rides: "+h);
-                                        if(h.get("carType").equals(carType)){
-                                            System.out.println("CarTypeOfDriver Matched");
-                                            if(h.get("rideStatus").equals("0")){
-                                                System.out.println("CarTypeOfDriver Matched and ride Not Assigned");
-                                                AlertDialog.Builder alert=new AlertDialog.Builder(DashBoard.this);
-                                                alert.setMessage("New Ride For \n Rs."+h.get("rideFare").toString());
-                                                alert.setCancelable(false);
-                                                alert.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                        System.out.println("CarTypeOfDriver RideAccepted");
-                                                        Toast.makeText(DashBoard.this, "RideAccepted", Toast.LENGTH_SHORT).show();
-                                                        driverData.collection("drivers").document(mobile).update("loginStatus","Assigned");
-                                                    }
-                                                });
-                                                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                        Toast.makeText(DashBoard.this, "RideDeclined", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                                alert.show();
-                                            }
-                                        }
-                                    }
 
                                 }
                             });
-
-
-
-
-
-                            getTimer();
-
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -320,4 +290,75 @@ public class DashBoard extends AppCompatActivity {
             exit.show();
         }
     }
+    void getRides(){
+        if (j<arrayList1.size()){
+            h= (HashMap) arrayList1.get(j);
+            System.out.println("My Rides12345: "+h);
+            getRideData();
+        }
+        /*if(j==arrayList1.size()){
+            getTimer();
+        }*/
+    }
+    void getRideData(){
+        if(h.get("carType").equals(carType)){
+            System.out.println("CarTypeOfDriver Matched");
+            if(h.get("rideStatus").equals("0")){
+                System.out.println("CarTypeOfDriver Matched and ride Not Assigned");
+                AlertDialog.Builder alert=new AlertDialog.Builder(DashBoard.this);
+                alert.setMessage("New Ride For \n Rs."+h.get("rideFare").toString());
+                alert.setCancelable(false);
+                alert.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        System.out.println("CarTypeOfDriver RideAccepted");
+                        Toast.makeText(DashBoard.this, "RideAccepted", Toast.LENGTH_SHORT).show();
+                        int a=j;
+                        rideData.collection("rides").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                System.out.println("Qwertyuiop: "+queryDocumentSnapshots.getDocuments().toString());
+                                arrayList3.add(queryDocumentSnapshots.getDocuments().get(a));
+                                System.out.println("My Ride Details: "+arrayList3);
+                                DocumentSnapshot hash= (DocumentSnapshot) arrayList3.get(0);
+                                System.out.println("My Ride Details into Hash: "+hash);
+                                String id=hash.getId();
+                                System.out.println("My Ride Details ID: "+id);
+                                rideData.collection("rides").document(id).update("rideStatus","1");
+                                rideData.collection("rides").document(id).update("driverAssigned","yes");
+                                rideData.collection("rides").document(id).update("driverNumber",mobile);
+                                rideData.collection("rides").document(id).update("driverName",driverName);
+                                driverData.collection("drivers").document(mobile).update("loginStatus","Assigned");
+                                getNextPage(id);
+
+                            }
+                        });
+                        j=arrayList1.size();
+
+                    }
+                });
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(DashBoard.this, "RideDeclined", Toast.LENGTH_SHORT).show();
+                        j+=1;
+                        getRides();
+                    }
+                });
+                alert.show();
+            }
+        }
+        else{
+            j+=1;
+            getRides();
+        }
+    }
+
+    private void getNextPage(String id) {
+        Intent intent=new Intent(DashBoard.this,RidePage.class);
+        intent.putExtra("rideID",id);
+        startActivity(intent);
+    }
 }
+
+
