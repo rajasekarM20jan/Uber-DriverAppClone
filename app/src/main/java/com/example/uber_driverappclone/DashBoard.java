@@ -134,6 +134,7 @@ public class DashBoard extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         driverData.collection("drivers").document(mobile).update("loginStatus","Online");
+                        j=0;
                         getData();
                         Toast.makeText(DashBoard.this, "You're Online", Toast.LENGTH_SHORT).show();
 
