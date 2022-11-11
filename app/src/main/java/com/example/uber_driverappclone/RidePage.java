@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,10 +25,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 public class RidePage extends AppCompatActivity {
     SupportMapFragment map;
     String rideID;
+    Button navigateButton;
     SharedPreferences sp;
     FirebaseFirestore driver,ride;
     String mobile;
@@ -39,13 +43,14 @@ public class RidePage extends AppCompatActivity {
         setContentView(R.layout.activity_ride_page);
         SharedPreferences myRide=getSharedPreferences("myRide",MODE_PRIVATE);
         rideID=myRide.getString("rideID","noRides");
+        navigateButton=findViewById(R.id.navigateButton);
         driver=FirebaseFirestore.getInstance();
         ride=FirebaseFirestore.getInstance();
-        /*sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
+        sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
         mobile=sp.getString("mobile","no");
-        System.out.println("my Mobile"+mobile);*/
+        System.out.println("my Mobile"+mobile);
 
-        mobile="+916369208301";
+
 
         driver.collection("drivers").document(mobile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -64,6 +69,9 @@ public class RidePage extends AppCompatActivity {
                                 ,Double.parseDouble(B.get("longitude").toString()));
 
                         getMap();
+
+
+
 
                     }
                 });
@@ -101,6 +109,9 @@ public class RidePage extends AppCompatActivity {
 
             }
         });
+
+
+
 
     }
 }
