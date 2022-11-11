@@ -356,8 +356,11 @@ public class DashBoard extends AppCompatActivity {
     }
 
     private void getNextPage(String id) {
+        SharedPreferences myRide=getSharedPreferences("myRide",MODE_PRIVATE);
+        SharedPreferences.Editor editor=myRide.edit();
+        editor.putString("rideID",id);
+        editor.commit();
         Intent intent=new Intent(DashBoard.this,RidePage.class);
-        intent.putExtra("rideID",id);
         startActivity(intent);
     }
 }

@@ -37,8 +37,8 @@ public class RidePage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_page);
-        Intent i=getIntent();
-        rideID=i.getStringExtra("rideID");
+        SharedPreferences myRide=getSharedPreferences("myRide",MODE_PRIVATE);
+        rideID=myRide.getString("rideID","noRides");
         driver=FirebaseFirestore.getInstance();
         ride=FirebaseFirestore.getInstance();
         /*sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
