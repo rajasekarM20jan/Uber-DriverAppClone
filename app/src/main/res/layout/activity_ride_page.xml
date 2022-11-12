@@ -11,7 +11,8 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="70dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     <android.widget.Button
         android:id="@+id/navigateButton"
@@ -19,11 +20,23 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="90dp"
         android:background="@drawable/navigator"
         android:text="Navigate"
         android:drawableEnd="@drawable/navigation"
+        />
 
+    <android.widget.Button
+        android:id="@+id/reachedPickup"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/black"
+        android:text="Reached PickUp Location"
+        android:drawableEnd="@drawable/navigation"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

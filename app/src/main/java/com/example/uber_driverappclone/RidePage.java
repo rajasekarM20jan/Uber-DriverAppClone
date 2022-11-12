@@ -9,7 +9,9 @@ import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,7 +32,7 @@ import java.util.Locale;
 public class RidePage extends AppCompatActivity {
     SupportMapFragment map;
     String rideID;
-    Button navigateButton;
+    Button navigateButton,reachedPickup;
     SharedPreferences sp;
     FirebaseFirestore driver,ride;
     String mobile;
@@ -44,11 +46,15 @@ public class RidePage extends AppCompatActivity {
         SharedPreferences myRide=getSharedPreferences("myRide",MODE_PRIVATE);
         rideID=myRide.getString("rideID","noRides");
         navigateButton=findViewById(R.id.navigateButton);
+        reachedPickup=findViewById(R.id.reachedPickup);
         driver=FirebaseFirestore.getInstance();
         ride=FirebaseFirestore.getInstance();
         sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
         mobile=sp.getString("mobile","no");
         System.out.println("my Mobile"+mobile);
+
+
+        /*mobile="+916369208301";*/
 
 
 
@@ -71,7 +77,41 @@ public class RidePage extends AppCompatActivity {
                         getMap();
 
 
+                        navigateButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
+                                String mapsUri="http://maps.google.com/maps?saddr="+driverLoc.latitude+","+driverLoc.longitude+"&daddr="
+                                        +pickLoc.latitude+","+pickLoc.longitude;
+                                Intent intent = new Intent( Intent.ACTION_VIEW,
+                                        Uri.parse(mapsUri));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK&Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                                startActivity(intent);
+                            }
+                        });
+
+                        reachedPickup.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Location startPoint=new Location("LocA");
+                                startPoint.setLatitude(driverLoc.latitude);
+                                startPoint.setLongitude(driverLoc.longitude);
+                                Location endPoint=new Location("LocB");
+                                endPoint.setLatitude(pickLoc.latitude);
+                                endPoint.setLongitude(pickLoc.longitude);
+
+                                int distance=(int) startPoint.distanceTo(endPoint);
+
+                                if(distance<=50){
+                                    Toast.makeText(RidePage.this, "Reached Location", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(RidePage.this
+                                            , "You Must reach the pick up Location First."
+                                            , Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
 
                     }
                 });
