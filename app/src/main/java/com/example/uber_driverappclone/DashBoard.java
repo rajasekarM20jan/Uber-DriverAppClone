@@ -348,8 +348,14 @@ public class DashBoard extends AppCompatActivity {
                 });
                 alert.show();
             }
+            else{
+                System.out.println("increased");
+                j+=1;
+                getRides();
+            }
         }
         else{
+            System.out.println("increased");
             j+=1;
             getRides();
         }

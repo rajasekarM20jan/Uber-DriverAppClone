@@ -1,8 +1,10 @@
 package com.example.uber_driverappclone;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -32,7 +34,7 @@ import java.util.Locale;
 public class RidePage extends AppCompatActivity {
     SupportMapFragment map;
     String rideID;
-    Button navigateButton,reachedPickup;
+    Button navigateButton,reachedPickup,startRide,endRide;
     SharedPreferences sp;
     FirebaseFirestore driver,ride;
     String mobile;
@@ -47,6 +49,8 @@ public class RidePage extends AppCompatActivity {
         rideID=myRide.getString("rideID","noRides");
         navigateButton=findViewById(R.id.navigateButton);
         reachedPickup=findViewById(R.id.reachedPickup);
+        startRide=findViewById(R.id.startRide);
+        endRide=findViewById(R.id.endRide);
         driver=FirebaseFirestore.getInstance();
         ride=FirebaseFirestore.getInstance();
         sp=getSharedPreferences("MyMobile",MODE_PRIVATE);
@@ -92,11 +96,73 @@ public class RidePage extends AppCompatActivity {
                                 int distance=(int) startPoint.distanceTo(endPoint);
 
                                 if(distance<=50){
-                                    Toast.makeText(RidePage.this, "Reached Location", Toast.LENGTH_SHORT).show();
-                                    getMap(driverLoc,dropLoc);
+                                    ride.collection("rides").document(rideID)
+                                            .update("rideStatus","2");
+                                    reachedPickup.setVisibility(View.INVISIBLE);
+                                    startRide.setVisibility(View.VISIBLE);
+                                    getMap(driverLoc,pickLoc);
                                 }else{
                                     Toast.makeText(RidePage.this
                                             , "You Must reach the pick up Location First."
+                                            , Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                        startRide.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                AlertDialog.Builder alert=new AlertDialog.Builder(RidePage.this);
+                                alert.setMessage("Please Confirm that customer is onBoarded or Not.");
+                                alert.setCancelable(false);
+                                alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        ride.collection("rides").document(rideID)
+                                                .update("rideStatus","3");
+                                        getMap(driverLoc,dropLoc);
+                                        startRide.setVisibility(View.INVISIBLE);
+                                        endRide.setVisibility(View.VISIBLE);
+
+                                    }
+                                });
+                                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Toast.makeText(RidePage.this, "Do not click on Start Ride before the Rider Arrives", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        });
+
+                        endRide.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Location startPoint=new Location("LocA");
+                                startPoint.setLatitude(driverLoc.latitude);
+                                startPoint.setLongitude(driverLoc.longitude);
+                                Location endPoint=new Location("LocB");
+                                endPoint.setLatitude(dropLoc.latitude);
+                                endPoint.setLongitude(dropLoc.longitude);
+
+                                int distance=(int) startPoint.distanceTo(endPoint);
+
+                                if(distance<=50){
+                                    ride.collection("rides").document(rideID)
+                                            .update("rideStatus","4");
+                                    getMap(driverLoc,dropLoc);
+                                    AlertDialog.Builder alert=new AlertDialog.Builder(RidePage.this);
+                                    alert.setMessage("Please Confirm that you have received payment status from the customer.");
+                                    alert.setCancelable(false);
+                                    alert.setNegativeButton("Confirm", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            Toast.makeText(RidePage.this, "Thank You! For the Confirmation", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }else{
+                                    Toast.makeText(RidePage.this
+                                            , "You Must reach the Drop up Location First."
                                             , Toast.LENGTH_SHORT).show();
                                 }
                             }

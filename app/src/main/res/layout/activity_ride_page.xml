@@ -31,12 +31,34 @@
         android:id="@+id/reachedPickup"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:background="@color/black"
+        android:text="Reached PickUp Location"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <android.widget.Button
+        android:id="@+id/startRide"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/black"
-        android:text="Reached PickUp Location"
-        android:drawableEnd="@drawable/navigation"
+        android:text="Start Ride"
+        android:visibility="invisible"
+        />
+
+    <android.widget.Button
+        android:id="@+id/endRide"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/black"
+        android:text="Start Ride"
+        android:visibility="invisible"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
