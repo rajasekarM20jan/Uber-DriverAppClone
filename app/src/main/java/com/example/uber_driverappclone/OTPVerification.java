@@ -132,6 +132,7 @@ public class OTPVerification extends AppCompatActivity {
 
                     }else{
                         System.out.println("qwertyuiop : no data found");
+                        sendToDetailsPage();
                     }
                 }
             });

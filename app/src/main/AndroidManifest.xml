@@ -22,6 +22,20 @@
         android:theme="@style/Theme.UberDriverAppClone"
         tools:targetApi="31">
         <activity
+            android:name=".SplashScreen"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".RidePage"
             android:exported="false">
             <meta-data
@@ -37,12 +51,7 @@
         </activity>
         <activity
             android:name=".DashBoard"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -87,6 +96,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="false">
+
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

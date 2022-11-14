@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 
 import android.content.Context;
@@ -38,6 +39,7 @@ import java.util.Map;
 public class GetDriverData extends AppCompatActivity {
 
     Button button,submitLicense,carType;
+    CardView cardview1,cardview2;
     SharedPreferences sp;
     String mobile;
     LinearLayout linear123;
@@ -53,6 +55,8 @@ public class GetDriverData extends AppCompatActivity {
         driverData=FirebaseFirestore.getInstance();
         button=findViewById(R.id.button234);
         carType=findViewById(R.id.carType);
+        cardview1=findViewById(R.id.cardview234);
+        cardview2=findViewById(R.id.cardview235);
         linear123=findViewById(R.id.linear123);
         radioCarType=findViewById(R.id.radioCarType);
         intercity=findViewById(R.id.intercity);
@@ -90,6 +94,7 @@ public class GetDriverData extends AppCompatActivity {
                         .document(mobile).update("licenseImage",uriImage);
                 Toast.makeText(GetDriverData.this, "Your License is added to Our Database", Toast.LENGTH_SHORT).show();
                 button.setClickable(false);
+                cardview2.setVisibility(View.VISIBLE);
                 carType.setVisibility(View.VISIBLE);
 
             }
@@ -99,6 +104,8 @@ public class GetDriverData extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                cardview1.setVisibility(View.INVISIBLE);
+                cardview2.setVisibility(View.INVISIBLE);
                 button.setVisibility(View.INVISIBLE);
                 carType.setVisibility(View.INVISIBLE);
                 linear123.setVisibility(View.VISIBLE);
@@ -116,6 +123,8 @@ public class GetDriverData extends AppCompatActivity {
                        Toast.makeText(GetDriverData.this, "Type Of Car you Selected is HatchBack", Toast.LENGTH_SHORT).show();
                        button.setClickable(false);
                        carType.setClickable(false);
+                       cardview1.setVisibility(View.VISIBLE);
+                       cardview2.setVisibility(View.VISIBLE);
                        button.setVisibility(View.VISIBLE);
                        carType.setVisibility(View.VISIBLE);
                        linear123.setVisibility(View.INVISIBLE);
@@ -128,6 +137,8 @@ public class GetDriverData extends AppCompatActivity {
                        Toast.makeText(GetDriverData.this, "Type Of Car you Selected is SEDAN or SUV", Toast.LENGTH_SHORT).show();
                        button.setClickable(false);
                        carType.setClickable(false);
+                       cardview1.setVisibility(View.VISIBLE);
+                       cardview2.setVisibility(View.VISIBLE);
                        button.setVisibility(View.VISIBLE);
                        carType.setVisibility(View.VISIBLE);
                        linear123.setVisibility(View.INVISIBLE);

@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "1065193629526",
-    "project_id": "uber-clone-6fcab",
-    "storage_bucket": "uber-clone-6fcab.appspot.com"
+    "project_number": "522870041342",
+    "project_id": "uber-clone-by-raj",
+    "storage_bucket": "uber-clone-by-raj.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1065193629526:android:3b3ce4f8df64efd4a0d8f7",
+        "mobilesdk_app_id": "1:522870041342:android:3b8c193ca1c3eb028213af",
         "android_client_info": {
           "package_name": "com.example.uber_clone"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1065193629526-s0gguhta68dl25dafqg2qvrsrc4rlhvm.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.uber_clone",
-            "certificate_hash": "d5440c8c7217da625e0170072790363e201dffa8"
-          }
-        },
-        {
-          "client_id": "1065193629526-momal59ragcio2t3k2o7i2ofteumvs6v.apps.googleusercontent.com",
+          "client_id": "522870041342-mhg87hmila56klholg0vj8r1uvkgq3ci.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAJF13KzkxyubCCQN_xYMMI_zn9q1K35qM"
+          "current_key": "AIzaSyDwWi6ODWNrg9QGSOtq_JA_apIIBh5GWYA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1065193629526-momal59ragcio2t3k2o7i2ofteumvs6v.apps.googleusercontent.com",
+              "client_id": "522870041342-mhg87hmila56klholg0vj8r1uvkgq3ci.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
@@ -44,27 +36,27 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1065193629526:android:83de58d506a1538da0d8f7",
+        "mobilesdk_app_id": "1:522870041342:android:4937971fb69617a98213af",
         "android_client_info": {
           "package_name": "com.example.uber_driverappclone"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1065193629526-momal59ragcio2t3k2o7i2ofteumvs6v.apps.googleusercontent.com",
+          "client_id": "522870041342-mhg87hmila56klholg0vj8r1uvkgq3ci.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAJF13KzkxyubCCQN_xYMMI_zn9q1K35qM"
+          "current_key": "AIzaSyDwWi6ODWNrg9QGSOtq_JA_apIIBh5GWYA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1065193629526-momal59ragcio2t3k2o7i2ofteumvs6v.apps.googleusercontent.com",
+              "client_id": "522870041342-mhg87hmila56klholg0vj8r1uvkgq3ci.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

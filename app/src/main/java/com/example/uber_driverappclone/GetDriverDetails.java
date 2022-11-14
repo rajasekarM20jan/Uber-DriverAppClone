@@ -69,12 +69,16 @@ public class GetDriverDetails extends AppCompatActivity {
 
         if(ContextCompat.checkSelfPermission(GetDriverDetails.this, Manifest.permission.ACCESS_FINE_LOCATION)==
                 PackageManager.PERMISSION_GRANTED){
+            System.out.println("Data Dead");
             flClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
+
+                    System.out.println("Data Dead1");
                     Geocoder geocoder=new Geocoder(GetDriverDetails.this, Locale.getDefault());
                     if(location!=null){
                         try {
+                            System.out.println("Data Dead2");
                             List<Address> address=geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
                             longitude =Double.toString(address.get(0).getLongitude());
                             latitude=Double.toString(address.get(0).getLatitude());
@@ -88,7 +92,10 @@ public class GetDriverDetails extends AppCompatActivity {
                             driver.put("licenseImage","");
                             driver.put("profileImage","");
                             driver.put("carType","");
+                            driver.put("wallet","0");
                             driver.put("loginStatus","Offline");
+
+                            System.out.println("Data Dead");
 
 
                             userDetails.collection("drivers").document(mobile).set(driver).addOnSuccessListener(new OnSuccessListener<Void>() {

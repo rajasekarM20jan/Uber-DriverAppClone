@@ -33,7 +33,7 @@ import java.util.Locale;
 
 public class RidePage extends AppCompatActivity {
     SupportMapFragment map;
-    String rideID;
+    String rideID,rideFare;
     Button navigateButton,reachedPickup,startRide,endRide;
     SharedPreferences sp;
     FirebaseFirestore driver,ride;
@@ -71,6 +71,9 @@ public class RidePage extends AppCompatActivity {
                 ride.collection("rides").document(rideID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        rideFare=documentSnapshot.get("rideFare").toString();
+
                         HashMap A= (HashMap) documentSnapshot.get("pickUp");
                         pickLoc=new LatLng(Double.parseDouble(A.get("latitude").toString())
                                 ,Double.parseDouble(A.get("longitude").toString()));
@@ -79,9 +82,6 @@ public class RidePage extends AppCompatActivity {
                                 ,Double.parseDouble(B.get("longitude").toString()));
 
                         getMap(driverLoc,pickLoc);
-
-
-
 
                         reachedPickup.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -132,6 +132,7 @@ public class RidePage extends AppCompatActivity {
                                         Toast.makeText(RidePage.this, "Do not click on Start Ride before the Rider Arrives", Toast.LENGTH_SHORT).show();
                                     }
                                 });
+                                alert.show();
                             }
                         });
 
@@ -150,16 +151,51 @@ public class RidePage extends AppCompatActivity {
                                 if(distance<=50){
                                     ride.collection("rides").document(rideID)
                                             .update("rideStatus","4");
-                                    getMap(driverLoc,dropLoc);
+
                                     AlertDialog.Builder alert=new AlertDialog.Builder(RidePage.this);
                                     alert.setMessage("Please Confirm that you have received payment status from the customer.");
                                     alert.setCancelable(false);
                                     alert.setNegativeButton("Confirm", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            Toast.makeText(RidePage.this, "Thank You! For the Confirmation", Toast.LENGTH_SHORT).show();
+                                            driver.collection("drivers").document(mobile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                    String Wallet=documentSnapshot.get("wallet").toString();
+                                                    int a=Integer.parseInt(Wallet);
+                                                    int b=Integer.parseInt(rideFare);
+                                                    String c=Integer.toString((a+b));
+                                                    driver.collection("drivers").document(mobile).update("wallet",c);
+                                                    Toast.makeText(RidePage.this, "Thank You For The Confirmation..", Toast.LENGTH_SHORT).show();
+
+
+                                                    AlertDialog.Builder alert=new AlertDialog.Builder(RidePage.this);
+                                                    alert.setMessage("Do You Want to Stay Online?");
+                                                    alert.setCancelable(false);
+                                                    alert.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            driver.collection("drivers").document(mobile).update("loginStatus","Online");
+                                                            Intent intent=new Intent(RidePage.this,DashBoard.class);
+                                                            startActivity(intent);
+                                                        }
+                                                    });
+                                                    alert.setPositiveButton("No", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            driver.collection("drivers").document(mobile).update("loginStatus","Offline");
+                                                            finishAffinity();
+                                                        }
+                                                    });
+                                                    alert.show();
+                                                }
+                                            });
+
                                         }
                                     });
+                                    alert.show();
+
+                                    getMap(driverLoc,dropLoc);
                                 }else{
                                     Toast.makeText(RidePage.this
                                             , "You Must reach the Drop up Location First."
@@ -192,6 +228,7 @@ public class RidePage extends AppCompatActivity {
                 pickOpt=new MarkerOptions().position(locB)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.squaremarker));
 
+                googleMap.clear();
 
                 googleMap.addMarker(driverOpt);
                 googleMap.addMarker(pickOpt);
@@ -204,6 +241,8 @@ public class RidePage extends AppCompatActivity {
                 navigateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+
 
                         String mapsUri="http://maps.google.com/maps?saddr="+locA.latitude+","+locA.longitude+"&daddr="
                                 +locB.latitude+","+locB.longitude;
@@ -220,6 +259,11 @@ public class RidePage extends AppCompatActivity {
 
 
 
+
+    }
+
+    @Override
+    public void onBackPressed() {
 
     }
 }
